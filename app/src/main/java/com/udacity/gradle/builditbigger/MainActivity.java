@@ -1,14 +1,17 @@
 package com.udacity.gradle.builditbigger;
 
-import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
+import com.iktwo.JokeTeller;
+import com.iktwo.jokeshow.JokeActivity;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements EndpointsAsyncTask.AsyncJokeResponse {
+    private JokeTeller jokeTeller = new JokeTeller();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +42,17 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void tellJoke(View view){
-        Toast.makeText(this, "derp", Toast.LENGTH_SHORT).show();
+    public void tellJoke(View view) {
+        /// TODO: check if is connected to internet, show loading icon
+        new EndpointsAsyncTask(this, this).execute();
     }
 
-
+    @Override
+    public void gotJoke(String joke) {
+        /// TODO: hide loading icon
+        Intent intent = new Intent(this, JokeActivity.class);
+        intent.putExtra(JokeActivity.JOKE, joke);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 }
